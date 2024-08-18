@@ -37,7 +37,17 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from . import NutConfigEntry, PyNUTData
-from .const import DOMAIN, KEY_STATUS, KEY_STATUS_DISPLAY, STATE_TYPES
+from .const import (
+    AMBIENT_HUMIDITY,
+    AMBIENT_HUMIDITY_STATUS,
+    AMBIENT_PRESENT,
+    AMBIENT_TEMPERATURE,
+    AMBIENT_TEMPERATURE_STATUS,
+    DOMAIN,
+    KEY_STATUS,
+    KEY_STATUS_DISPLAY,
+    STATE_TYPES,
+)
 
 NUT_DEV_INFO_TO_DEV_INFO: dict[str, str] = {
     "manufacturer": ATTR_MANUFACTURER,
@@ -977,6 +987,16 @@ async def async_setup_entry(
     # of the UPS instead.
     if KEY_STATUS in resources:
         resources.append(KEY_STATUS_DISPLAY)
+
+    if status.get(AMBIENT_PRESENT) == "no":
+        if AMBIENT_TEMPERATURE in resources:
+            resources.remove(AMBIENT_TEMPERATURE)
+        if AMBIENT_TEMPERATURE_STATUS in resources:
+            resources.remove(AMBIENT_TEMPERATURE_STATUS)
+        if AMBIENT_HUMIDITY in resources:
+            resources.remove(AMBIENT_HUMIDITY)
+        if AMBIENT_HUMIDITY_STATUS in resources:
+            resources.remove(AMBIENT_HUMIDITY_STATUS)
 
     async_add_entities(
         NUTSensor(

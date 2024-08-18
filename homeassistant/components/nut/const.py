@@ -15,6 +15,12 @@ DEFAULT_PORT = 3493
 KEY_STATUS = "ups.status"
 KEY_STATUS_DISPLAY = "ups.status.display"
 
+AMBIENT_PRESENT = "ambient.present"
+AMBIENT_TEMPERATURE = "ambient.temperature"
+AMBIENT_TEMPERATURE_STATUS = "ambient.temperature.status"
+AMBIENT_HUMIDITY = "ambient.humidity"
+AMBIENT_HUMIDITY_STATUS = "ambient.humidity.status"
+
 DEFAULT_SCAN_INTERVAL = 60
 
 STATE_TYPES = {
