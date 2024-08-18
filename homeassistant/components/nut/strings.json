@@ -215,6 +215,12 @@
       "ups_type": { "name": "Device type" },
       "ups_watchdog_status": { "name": "Watchdog status" },
       "watts": { "name": "Watts" }
+    },
+    "switch": {
+      "outlet_number_poweronoff": { "name": "Power outlet {outlet_num}" }
+    },
+    "button": {
+      "outlet_number_powercycle": { "name": "Power cycle outlet {outlet_num}" }
     }
   }
 }

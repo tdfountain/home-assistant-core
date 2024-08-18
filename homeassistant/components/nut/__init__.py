@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import timedelta
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from aionut import AIONUTClient, NUTError, NUTLoginError
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
+    ATTR_MANUFACTURER,
+    ATTR_MODEL,
+    ATTR_SERIAL_NUMBER,
+    ATTR_SW_VERSION,
     CONF_ALIAS,
     CONF_HOST,
     CONF_PASSWORD,
@@ -23,16 +27,29 @@ from homeassistant.const import (
 from homeassistant.core import Event, HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, HomeAssistantError
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
     INTEGRATION_SUPPORTED_COMMANDS,
+    OUTLET_COUNT,
+    OUTLET_PREFIX,
+    OUTLET_SUFFIX_LOAD_CYCLE,
+    OUTLET_SUFFIX_LOAD_OFF,
+    OUTLET_SUFFIX_LOAD_ON,
     PLATFORMS,
 )
 
 NUT_FAKE_SERIAL = ["unknown", "blank"]
+
+NUT_DEV_INFO_TO_DEV_INFO: dict[str, str] = {
+    "manufacturer": ATTR_MANUFACTURER,
+    "model": ATTR_MODEL,
+    "firmware": ATTR_SW_VERSION,
+    "serial": ATTR_SERIAL_NUMBER,
+}
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -46,7 +63,8 @@ class NutRuntimeData:
     coordinator: DataUpdateCoordinator
     data: PyNUTData
     unique_id: str
-    user_available_commands: set[str]
+    device_action_commands: set[str]
+    device_all_action_commands: set[str]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: NutConfigEntry) -> bool:
@@ -110,16 +128,31 @@ async def async_setup_entry(hass: HomeAssistant, entry: NutConfigEntry) -> bool:
         unique_id = entry.entry_id
 
     if username is not None and password is not None:
-        user_available_commands = {
+        all_integration_supported_commands = INTEGRATION_SUPPORTED_COMMANDS
+
+        device_action_commands = {
             device_supported_command
             for device_supported_command in await data.async_list_commands() or {}
-            if device_supported_command in INTEGRATION_SUPPORTED_COMMANDS
+            if device_supported_command in all_integration_supported_commands
         }
     else:
-        user_available_commands = set()
+        device_action_commands = set()
+
+    device_all_action_commands = device_action_commands
+    if (num_outlets := status.get(OUTLET_COUNT)) is not None:
+        for outlet_num in range(1, int(num_outlets) + 1):
+            device_all_action_commands.add(
+                OUTLET_PREFIX + str(outlet_num) + OUTLET_SUFFIX_LOAD_ON
+            )
+            device_all_action_commands.add(
+                OUTLET_PREFIX + str(outlet_num) + OUTLET_SUFFIX_LOAD_OFF
+            )
+            device_all_action_commands.add(
+                OUTLET_PREFIX + str(outlet_num) + OUTLET_SUFFIX_LOAD_CYCLE
+            )
 
     entry.runtime_data = NutRuntimeData(
-        coordinator, data, unique_id, user_available_commands
+        coordinator, data, unique_id, device_action_commands, device_all_action_commands
     )
 
     device_registry = dr.async_get(hass)
@@ -212,6 +245,18 @@ def _unique_id_from_status(status: dict[str, str]) -> str | None:
     if serial:
         unique_id_group.append(serial)
     return "_".join(unique_id_group)
+
+
+def _get_nut_device_info(data: PyNUTData) -> DeviceInfo:
+    """Return a DeviceInfo object filled with NUT device info."""
+    nut_dev_infos = asdict(data.device_info)
+    nut_infos = {
+        info_key: nut_dev_infos[nut_key]
+        for nut_key, info_key in NUT_DEV_INFO_TO_DEV_INFO.items()
+        if nut_dev_infos[nut_key] is not None
+    }
+
+    return cast(DeviceInfo, nut_infos)
 
 
 @dataclass

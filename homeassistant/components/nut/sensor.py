@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict
 import logging
-from typing import Final, cast
+from typing import Final
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -13,10 +12,6 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.const import (
-    ATTR_MANUFACTURER,
-    ATTR_MODEL,
-    ATTR_SERIAL_NUMBER,
-    ATTR_SW_VERSION,
     PERCENTAGE,
     STATE_UNKNOWN,
     EntityCategory,
@@ -36,7 +31,7 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
 )
 
-from . import NutConfigEntry, PyNUTData
+from . import NutConfigEntry, PyNUTData, _get_nut_device_info
 from .const import (
     AMBIENT_HUMIDITY,
     AMBIENT_HUMIDITY_STATUS,
@@ -50,13 +45,6 @@ from .const import (
     OUTLET_PREFIX,
     STATE_TYPES,
 )
-
-NUT_DEV_INFO_TO_DEV_INFO: dict[str, str] = {
-    "manufacturer": ATTR_MANUFACTURER,
-    "model": ATTR_MODEL,
-    "firmware": ATTR_SW_VERSION,
-    "serial": ATTR_SERIAL_NUMBER,
-}
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -996,18 +984,6 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         state_class=SensorStateClass.MEASUREMENT,
     ),
 }
-
-
-def _get_nut_device_info(data: PyNUTData) -> DeviceInfo:
-    """Return a DeviceInfo object filled with NUT device info."""
-    nut_dev_infos = asdict(data.device_info)
-    nut_infos = {
-        info_key: nut_dev_infos[nut_key]
-        for nut_key, info_key in NUT_DEV_INFO_TO_DEV_INFO.items()
-        if nut_dev_infos[nut_key] is not None
-    }
-
-    return cast(DeviceInfo, nut_infos)
 
 
 async def async_setup_entry(

@@ -145,6 +145,22 @@
       "ups_watchdog_status": {
         "default": "mdi:information-outline"
       }
+    },
+    "switch": {
+      "outlet_number_poweronoff": {
+        "default": "mdi:power"
+      },
+      "outlet_2_poweronoff": {
+        "default": "mdi:power"
+      },
+      "power_outlet_2": {
+        "default": "mdi:power"
+      }
+    },
+    "button": {
+      "outlet_number_powercycle": {
+        "default": "mdi:restart"
+      }
     }
   }
 }

@@ -6,7 +6,7 @@ from homeassistant.const import Platform
 
 DOMAIN = "nut"
 
-PLATFORMS = [Platform.SENSOR]
+PLATFORMS = [Platform.BUTTON, Platform.SENSOR, Platform.SWITCH]
 
 DEFAULT_NAME = "NUT UPS"
 DEFAULT_HOST = "localhost"
@@ -24,6 +24,9 @@ AMBIENT_HUMIDITY_STATUS = "ambient.humidity.status"
 OUTLET_COUNT = "outlet.count"
 
 OUTLET_PREFIX = "outlet."
+OUTLET_SUFFIX_LOAD_CYCLE = ".load.cycle"
+OUTLET_SUFFIX_LOAD_OFF = ".load.off"
+OUTLET_SUFFIX_LOAD_ON = ".load.on"
 
 DEFAULT_SCAN_INTERVAL = 60
 

@@ -26,11 +26,11 @@ async def async_get_config_entry_diagnostics(
 
     # Get information from Nut library
     nut_data = hass_data.data
-    nut_cmd = hass_data.user_available_commands
+    nut_cmd = hass_data.device_all_action_commands
     data["nut_data"] = {
         "ups_list": nut_data.ups_list,
         "status": nut_data.status,
-        "commands": nut_cmd,
+        "all_action_commands": nut_cmd,
     }
 
     # Gather information how this Nut device is represented in Home Assistant
