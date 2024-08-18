@@ -21,6 +21,10 @@ AMBIENT_TEMPERATURE_STATUS = "ambient.temperature.status"
 AMBIENT_HUMIDITY = "ambient.humidity"
 AMBIENT_HUMIDITY_STATUS = "ambient.humidity.status"
 
+OUTLET_COUNT = "outlet.count"
+
+OUTLET_PREFIX = "outlet."
+
 DEFAULT_SCAN_INTERVAL = 60
 
 STATE_TYPES = {

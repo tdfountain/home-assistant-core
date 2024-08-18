@@ -73,6 +73,21 @@
       "output_l3_power_percent": {
         "default": "mdi:gauge"
       },
+      "outlet_number_current": {
+        "default": "mdi:gauge"
+      },
+      "outlet_number_current_status": {
+        "default": "mdi:information-outline"
+      },
+      "outlet_number_desc": {
+        "default": "mdi:information-outline"
+      },
+      "outlet_number_name": {
+        "default": "mdi:information-outline"
+      },
+      "outlet_number_switchable": {
+        "default": "mdi:information-outline"
+      },
       "output_phases": {
         "default": "mdi:information-outline"
       },

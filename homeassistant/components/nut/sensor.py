@@ -46,6 +46,8 @@ from .const import (
     DOMAIN,
     KEY_STATUS,
     KEY_STATUS_DISPLAY,
+    OUTLET_COUNT,
+    OUTLET_PREFIX,
     STATE_TYPES,
 )
 
@@ -1046,6 +1048,79 @@ async def async_setup_entry(
         )
         for sensor_type in resources
     )
+
+    if (num_outlets := status.get(OUTLET_COUNT)) is not None:
+        entities = []
+        for outlet_num in range(1, int(num_outlets) + 1):
+            outlet_num_string = str(outlet_num)
+            entities += [
+                NUTSensor(
+                    coordinator,
+                    SensorEntityDescription(
+                        key=OUTLET_PREFIX + outlet_num_string + ".current",
+                        translation_key="outlet_number_current",
+                        translation_placeholders={"outlet_num": outlet_num_string},
+                        native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
+                        device_class=SensorDeviceClass.CURRENT,
+                        state_class=SensorStateClass.MEASUREMENT,
+                        entity_registry_enabled_default=True,
+                    ),
+                    data,
+                    unique_id,
+                ),
+                NUTSensor(
+                    coordinator,
+                    SensorEntityDescription(
+                        key=OUTLET_PREFIX + outlet_num_string + ".desc",
+                        translation_key="outlet_number_desc",
+                        translation_placeholders={"outlet_num": outlet_num_string},
+                        entity_registry_enabled_default=True,
+                    ),
+                    data,
+                    unique_id,
+                ),
+                NUTSensor(
+                    coordinator,
+                    SensorEntityDescription(
+                        key=OUTLET_PREFIX + outlet_num_string + ".name",
+                        translation_key="outlet_number_name",
+                        translation_placeholders={"outlet_num": outlet_num_string},
+                        entity_registry_enabled_default=True,
+                    ),
+                    data,
+                    unique_id,
+                ),
+                NUTSensor(
+                    coordinator,
+                    SensorEntityDescription(
+                        key=OUTLET_PREFIX + outlet_num_string + ".power",
+                        translation_key="outlet_number_power",
+                        translation_placeholders={"outlet_num": outlet_num_string},
+                        native_unit_of_measurement=UnitOfApparentPower.VOLT_AMPERE,
+                        device_class=SensorDeviceClass.APPARENT_POWER,
+                        state_class=SensorStateClass.MEASUREMENT,
+                        entity_registry_enabled_default=True,
+                    ),
+                    data,
+                    unique_id,
+                ),
+                NUTSensor(
+                    coordinator,
+                    SensorEntityDescription(
+                        key=OUTLET_PREFIX + outlet_num_string + ".realpower",
+                        translation_key="outlet_number_realpower",
+                        translation_placeholders={"outlet_num": outlet_num_string},
+                        native_unit_of_measurement=UnitOfPower.WATT,
+                        device_class=SensorDeviceClass.POWER,
+                        state_class=SensorStateClass.MEASUREMENT,
+                        entity_registry_enabled_default=True,
+                    ),
+                    data,
+                    unique_id,
+                ),
+            ]
+
+        async_add_entities(entities)
 
 
 class NUTSensor(CoordinatorEntity[DataUpdateCoordinator[dict[str, str]]], SensorEntity):
