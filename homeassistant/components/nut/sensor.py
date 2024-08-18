@@ -464,6 +464,10 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
+    "input.voltage.status": SensorEntityDescription(
+        key="input.voltage.status",
+        translation_key="input_voltage_status",
+    ),
     "input.L1-N.voltage": SensorEntityDescription(
         key="input.L1-N.voltage",
         translation_key="input_l1_n_voltage",
@@ -673,6 +677,10 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
+    "input.current.status": SensorEntityDescription(
+        key="input.current.status",
+        translation_key="input_current_status",
+    ),
     "input.L1.current": SensorEntityDescription(
         key="input.L1.current",
         translation_key="input_l1_current",
@@ -700,9 +708,23 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
+    "input.load": SensorEntityDescription(
+        key="input.load",
+        translation_key="input_load",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     "input.phases": SensorEntityDescription(
         key="input.phases",
         translation_key="input_phases",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+    ),
+    "input.power": SensorEntityDescription(
+        key="input.power",
+        translation_key="input_power",
+        device_class=SensorDeviceClass.APPARENT_POWER,
+        state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
@@ -741,6 +763,13 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
+    ),
+    "outlet.voltage": SensorEntityDescription(
+        key="outlet.voltage",
+        translation_key="outlet_voltage",
+        native_unit_of_measurement=UnitOfElectricPotential.VOLT,
+        device_class=SensorDeviceClass.VOLTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "output.power.nominal": SensorEntityDescription(
         key="output.power.nominal",
@@ -940,12 +969,22 @@ SENSOR_TYPES: Final[dict[str, SensorEntityDescription]] = {
         device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    "ambient.humidity.status": SensorEntityDescription(
+        key="ambient.humidity.status",
+        translation_key="ambient_humidity_status",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
     "ambient.temperature": SensorEntityDescription(
         key="ambient.temperature",
         translation_key="ambient_temperature",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "ambient.temperature.status": SensorEntityDescription(
+        key="ambient.temperature.status",
+        translation_key="ambient_temperature_status",
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     "watts": SensorEntityDescription(
         key="watts",
