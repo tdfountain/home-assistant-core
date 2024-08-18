@@ -129,6 +129,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: NutConfigEntry) -> bool:
         name=data.name.title(),
         manufacturer=data.device_info.manufacturer,
         model=data.device_info.model,
+        model_id=data.device_info.model_id,
         sw_version=data.device_info.firmware,
         serial_number=data.device_info.serial,
     )
@@ -165,6 +166,11 @@ def _model_from_status(status: dict[str, str]) -> str | None:
         or status.get("ups.model")
         or status.get("ups.productid")
     )
+
+
+def _model_id_from_status(status: dict[str, str]) -> str | None:
+    """Find the best model ID value from the status."""
+    return status.get("device.part")
 
 
 def _firmware_from_status(status: dict[str, str]) -> str | None:
@@ -208,6 +214,7 @@ class NUTDeviceInfo:
 
     manufacturer: str | None = None
     model: str | None = None
+    model_id: str | None = None
     firmware: str | None = None
     serial: str | None = None
 
@@ -268,9 +275,10 @@ class PyNUTData:
 
         manufacturer = _manufacturer_from_status(self._status)
         model = _model_from_status(self._status)
+        model_id = _model_id_from_status(self._status)
         firmware = _firmware_from_status(self._status)
         serial = _serial_from_status(self._status)
-        return NUTDeviceInfo(manufacturer, model, firmware, serial)
+        return NUTDeviceInfo(manufacturer, model, model_id, firmware, serial)
 
     async def _async_get_status(self) -> dict[str, str]:
         """Get the ups status from NUT."""
